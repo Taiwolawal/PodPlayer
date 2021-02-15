@@ -11,9 +11,10 @@ interface ItunesService {
     @GET("/search?media=podcast")
     fun searchPodcastByTerm(@Query("term") term: String): Call<PodcastResponse>
 
+    //Returns an instance as singleton. This ensures that the interface is only instantiated once during the app’s
+    //lifetime.
     companion object {
         val instance: ItunesService by lazy {
-
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://itunes.apple.com")
                 .addConverterFactory(GsonConverterFactory.create()).build()

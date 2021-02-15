@@ -13,25 +13,19 @@ import com.raywenderlich.podplay.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.search_item.view.*
 
 class PodcastListAdapter(
-    private var podcastSummaryViewList:
-    List<SearchViewModel.PodcastSummaryViewData>?,
-    private val podcastListAdapterListener:
-    PodcastListAdapterListener,
+    private var podcastSummaryViewList: List<SearchViewModel.PodcastSummaryViewData>?,
+    private val podcastListAdapterListener: PodcastListAdapterListener,
     private val parentActivity: Activity
 ) :
     RecyclerView.Adapter<PodcastListAdapter.ViewHolder>() {
     interface PodcastListAdapterListener {
-        fun onShowDetails(podcastSummaryViewData:
-                          SearchViewModel.PodcastSummaryViewData
-        )
+        fun onShowDetails(podcastSummaryViewData: SearchViewModel.PodcastSummaryViewData)
     }
-    inner class ViewHolder(v: View, private val podcastListAdapterListener:
-                           PodcastListAdapterListener) :
+    inner class ViewHolder(v: View, private val podcastListAdapterListener: PodcastListAdapterListener) :
         RecyclerView.ViewHolder(v) {
         var podcastSummaryViewData: SearchViewModel.PodcastSummaryViewData? = null
         val nameTextView: TextView = v.podcastNameTextView
-        val lastUpdatedTextView: TextView =
-            v.podcastLastUpdatedTextView
+        val lastUpdatedTextView: TextView = v.podcastLastUpdatedTextView
         val podcastImageView: ImageView = v.podcastImage
         init {
             v.setOnClickListener {
@@ -46,10 +40,7 @@ class PodcastListAdapter(
         this.notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int):
-            PodcastListAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PodcastListAdapter.ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context)
             .inflate(R.layout.search_item, parent, false),
