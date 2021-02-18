@@ -1,17 +1,22 @@
 package com.raywenderlich.podplay.ui
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.raywenderlich.podplay.R
+import com.raywenderlich.podplay.adapter.EpisodeListAdapter
 import com.raywenderlich.podplay.model.PodcastViewModel
 import kotlinx.android.synthetic.main.fragment_podcast_details.*
 
 class PodcastDetailsFragment : Fragment() {
 
     private val podcastViewModel: PodcastViewModel by activityViewModels()
+    private lateinit var episodeListAdapter: EpisodeListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +30,7 @@ class PodcastDetailsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         updateControls()
+        setupControls()
     }
     // 2
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -40,6 +46,20 @@ class PodcastDetailsFragment : Fragment() {
             Glide.with(activity).load(viewData.imageUrl)
                 .into(feedImageView)
         }
+    }
+
+    private fun setupControls() {
+// 1
+        feedDescTextView.movementMethod = ScrollingMovementMethod()
+// 2
+        episodeRecyclerView.setHasFixedSize(true)
+        val layoutManager = LinearLayoutManager(activity)
+        episodeRecyclerView.layoutManager = layoutManager
+        val dividerItemDecoration = DividerItemDecoration(episodeRecyclerView.context, layoutManager.orientation)
+        episodeRecyclerView.addItemDecoration(dividerItemDecoration)
+// 3
+        episodeListAdapter = EpisodeListAdapter(podcastViewModel.activePodcastViewData?.episodes)
+        episodeRecyclerView.adapter = episodeListAdapter
     }
 
     companion object {

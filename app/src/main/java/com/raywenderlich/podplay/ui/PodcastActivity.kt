@@ -19,6 +19,7 @@ import com.raywenderlich.podplay.adapter.PodcastListAdapter
 import com.raywenderlich.podplay.model.PodcastViewModel
 import com.raywenderlich.podplay.repository.ItunesRepo
 import com.raywenderlich.podplay.repository.PodcastRepo
+import com.raywenderlich.podplay.services.FeedService
 import com.raywenderlich.podplay.services.ItunesService
 import com.raywenderlich.podplay.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.activity_podcast.*
@@ -51,13 +52,11 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         setSupportActionBar(toolbar)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_search, menu)
 
-        if (menu != null) {
-            searchMenuItem = menu.findItem(R.id.search_item)
-        }
+        searchMenuItem = menu.findItem(R.id.search_item)
         val searchView = searchMenuItem.actionView as SearchView
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
@@ -102,7 +101,8 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     private fun setupViewModels() {
         val service = ItunesService.instance
         searchViewModel.iTunesRepo = ItunesRepo(service)
-        podcastViewModel.podcastRepo = PodcastRepo()
+        val rssService = FeedService.instance
+        podcastViewModel.podcastRepo = PodcastRepo(rssService)
     }
 
     private fun updateControls() {
@@ -142,11 +142,10 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     }
 
     private fun createPodcastDetailsFragment(): PodcastDetailsFragment {
-// 1
         var podcastDetailsFragment = supportFragmentManager
             .findFragmentByTag(TAG_DETAILS_FRAGMENT) as
                 PodcastDetailsFragment?
-// 2
+
         if (podcastDetailsFragment == null) {
             podcastDetailsFragment = PodcastDetailsFragment.newInstance()
         }
