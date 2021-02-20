@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.podplay.R
-import com.raywenderlich.podplay.model.PodcastViewModel
+import com.raywenderlich.podplay.viewmodel.PodcastViewModel
 import com.raywenderlich.podplay.util.DateUtils
 import com.raywenderlich.podplay.util.HtmlUtils
 import kotlinx.android.synthetic.main.episode_item.view.*

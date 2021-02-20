@@ -1,5 +1,7 @@
 package com.raywenderlich.podplay.repository
 
+import androidx.lifecycle.LiveData
+import com.raywenderlich.podplay.db.PodcastDao
 import com.raywenderlich.podplay.model.Episode
 import com.raywenderlich.podplay.model.Podcast
 import com.raywenderlich.podplay.services.FeedService
@@ -9,17 +11,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class PodcastRepo(private var feedService: FeedService){
+class PodcastRepo(private var feedService: FeedService, private var podcastDao: PodcastDao) {
 
 
     fun getPodcast(feedUrl: String, callback: (Podcast?) -> Unit) {
-        feedService.getFeed(feedUrl) { feedResponse ->
-            var podcast: Podcast? = null
-            if (feedResponse != null) {
-                podcast = rssResponseToPodcast(feedUrl, "", feedResponse)
-            }
-            GlobalScope.launch(Dispatchers.Main) {
-                callback(podcast)
+        GlobalScope.launch {
+            val podcast = podcastDao.loadPodcast(feedUrl)
+            if (podcast != null) {
+                podcast.id?.let {
+                    podcast.episodes = podcastDao.loadEpisodes(it)
+                    GlobalScope.launch(Dispatchers.Main) {
+                        callback(podcast)
+                    }
+                }
+            } else {
+                feedService.getFeed(feedUrl) { feedResponse ->
+                    var podcast: Podcast? = null
+                    if (feedResponse != null) {
+                        podcast = rssResponseToPodcast(feedUrl, "", feedResponse)
+                    }
+                    GlobalScope.launch(Dispatchers.Main) {
+                        callback(podcast)
+                    }
+                }
             }
         }
     }
@@ -27,27 +41,53 @@ class PodcastRepo(private var feedService: FeedService){
     private fun rssItemsToEpisodes(episodeResponses: List<RssFeedResponse.EpisodeResponse>): List<Episode> {
         return episodeResponses.map {
             Episode(
-                    it.guid ?: "",
-                    it.title ?: "",
-                    it.description ?: "",
-                    it.url ?: "",
-                    it.type ?: "",
-                    DateUtils.xmlDateToDate(it.pubDate),
-                    it.duration ?: ""
+                it.guid ?: "",
+                null,
+                it.title ?: "",
+                it.description ?: "",
+                it.url ?: "",
+                it.type ?: "",
+                DateUtils.xmlDateToDate(it.pubDate),
+                it.duration ?: ""
             )
         }
 
     }
 
-    private fun rssResponseToPodcast(feedUrl: String, imageUrl: String, rssResponse: RssFeedResponse): Podcast? {
-// 1
+    private fun rssResponseToPodcast(
+        feedUrl: String,
+        imageUrl: String,
+        rssResponse: RssFeedResponse
+    ): Podcast? {
         val items = rssResponse.episodes ?: return null
-// 2
-        val description = if (rssResponse.description == "") rssResponse.summary else rssResponse.description
-// 3
-        return Podcast(feedUrl, rssResponse.title, description,
-                imageUrl,
-                rssResponse.lastUpdated, episodes = rssItemsToEpisodes(items))
+        val description =
+            if (rssResponse.description == "") rssResponse.summary else rssResponse.description
+        return Podcast(
+            null, feedUrl, rssResponse.title, description,
+            imageUrl,
+            rssResponse.lastUpdated, episodes = rssItemsToEpisodes(items)
+        )
     }
+
+    fun save(podcast: Podcast) {
+        GlobalScope.launch {
+            val podcastId = podcastDao.insertPodcast(podcast)
+            for (episode in podcast.episodes) {
+                episode.podcastId = podcastId
+                podcastDao.insertEpisode(episode)
+            }
+        }
+    }
+
+    fun getAll(): LiveData<List<Podcast>> {
+        return podcastDao.loadPodcasts()
+    }
+
+    fun delete(podcast: Podcast) {
+        GlobalScope.launch {
+            podcastDao.deletePodcast(podcast)
+        }
+    }
+
 
 }
