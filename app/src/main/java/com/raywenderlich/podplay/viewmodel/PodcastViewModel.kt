@@ -52,8 +52,7 @@ class PodcastViewModel(application: Application) : AndroidViewModel(application)
         )
     }
 
-    fun getPodcast(podcastSummaryViewData: SearchViewModel.PodcastSummaryViewData,
-                   callback: (PodcastViewData?) -> Unit) {
+    fun getPodcast(podcastSummaryViewData: SearchViewModel.PodcastSummaryViewData, callback: (PodcastViewData?) -> Unit) {
         val repo = podcastRepo ?: return
         val feedUrl = podcastSummaryViewData.feedUrl ?: return
         repo.getPodcast(feedUrl) {
@@ -100,6 +99,19 @@ class PodcastViewModel(application: Application) : AndroidViewModel(application)
         val repo = podcastRepo ?: return
         activePodcast?.let {
             repo.delete(it)
+        }
+    }
+
+    fun setActivePodcast(feedUrl: String, callback: (SearchViewModel.PodcastSummaryViewData?) -> Unit) {
+        val repo = podcastRepo ?: return
+        repo.getPodcast(feedUrl) {
+            if (it == null) {
+                callback(null)
+            } else {
+                activePodcastViewData = podcastToPodcastView(it)
+                activePodcast = it
+                callback(podcastToSummaryView(it))
+            }
         }
     }
 

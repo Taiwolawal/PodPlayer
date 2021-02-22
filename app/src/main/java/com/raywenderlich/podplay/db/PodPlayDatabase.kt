@@ -11,6 +11,7 @@ class Converters {
     fun fromTimestamp(value: Long?): Date? {
         return if (value == null) null else Date(value)
     }
+
     @TypeConverter
     fun toTimestamp(date: Date?): Long? {
         return (date?.time)
@@ -20,21 +21,19 @@ class Converters {
 @Database(entities = arrayOf(Podcast::class, Episode::class), version = 1)
 @TypeConverters(Converters::class)
 abstract class PodPlayDatabase : RoomDatabase() {
-    // 2
     abstract fun podcastDao(): PodcastDao
-    // 3
+
     companion object {
-        // 4
         private var instance: PodPlayDatabase? = null
-        // 5
         fun getInstance(context: Context): PodPlayDatabase {
             if (instance == null) {
-// 6
-                instance = Room.databaseBuilder(context.applicationContext,
-                        PodPlayDatabase::class.java, "PodPlayer").build()
+
+                instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    PodPlayDatabase::class.java, "PodPlayer"
+                ).build()
             }
-// 7
-            return instance as PodPlayDatabase
+                return instance as PodPlayDatabase
+            }
         }
-    }
 }
