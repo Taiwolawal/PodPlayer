@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import com.raywenderlich.podplay.db.PodcastDao
 import com.raywenderlich.podplay.model.Episode
 import com.raywenderlich.podplay.model.Podcast
-import com.raywenderlich.podplay.services.FeedService
-import com.raywenderlich.podplay.services.RssFeedResponse
+import com.raywenderlich.podplay.service.FeedService
+import com.raywenderlich.podplay.service.RssFeedResponse
 import com.raywenderlich.podplay.util.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

@@ -1,4 +1,4 @@
-package com.raywenderlich.podplay.services
+package com.raywenderlich.podplay.service
 
 import com.raywenderlich.podplay.util.DateUtils
 import okhttp3.*

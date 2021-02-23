@@ -21,8 +21,8 @@ import com.raywenderlich.podplay.db.PodPlayDatabase
 import com.raywenderlich.podplay.viewmodel.PodcastViewModel
 import com.raywenderlich.podplay.repository.ItunesRepo
 import com.raywenderlich.podplay.repository.PodcastRepo
-import com.raywenderlich.podplay.services.FeedService
-import com.raywenderlich.podplay.services.ItunesService
+import com.raywenderlich.podplay.service.FeedService
+import com.raywenderlich.podplay.service.ItunesService
 import com.raywenderlich.podplay.viewmodel.SearchViewModel
 import com.raywenderlich.podplay.worker.EpisodeUpdateWorker
 import kotlinx.android.synthetic.main.activity_podcast.*

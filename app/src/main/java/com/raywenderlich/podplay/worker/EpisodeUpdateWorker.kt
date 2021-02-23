@@ -14,7 +14,7 @@ import androidx.work.WorkerParameters
 import com.raywenderlich.podplay.R
 import com.raywenderlich.podplay.db.PodPlayDatabase
 import com.raywenderlich.podplay.repository.PodcastRepo
-import com.raywenderlich.podplay.services.FeedService
+import com.raywenderlich.podplay.service.FeedService
 import com.raywenderlich.podplay.ui.PodcastActivity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -62,8 +62,7 @@ class EpisodeUpdateWorker(context: Context, params: WorkerParameters) : Coroutin
 
     private fun displayNotification(podcastInfo: PodcastRepo.PodcastUpdateInfo) {
 
-        val contentIntent = Intent(applicationContext,
-            PodcastActivity::class.java)
+        val contentIntent = Intent(applicationContext, PodcastActivity::class.java)
         contentIntent.putExtra(EXTRA_FEED_URL, podcastInfo.feedUrl)
         val pendingContentIntent =
             PendingIntent.getActivity(applicationContext, 0,

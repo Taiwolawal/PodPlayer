@@ -1,7 +1,7 @@
 package com.raywenderlich.podplay.repository
 
-import com.raywenderlich.podplay.services.ItunesService
-import com.raywenderlich.podplay.services.PodcastResponse
+import com.raywenderlich.podplay.service.ItunesService
+import com.raywenderlich.podplay.service.PodcastResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

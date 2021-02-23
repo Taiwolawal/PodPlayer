@@ -68,4 +68,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation "androidx.work:work-runtime-ktx:2.3.4"
+
+    implementation "androidx.media:media:1.1.0"
 }

@@ -1,4 +1,4 @@
-package com.raywenderlich.podplay.services
+package com.raywenderlich.podplay.service
 
 import java.util.*
 
