@@ -36,6 +36,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         private val TAG = "javaClass.simpleName"
         private const val TAG_DETAILS_FRAGMENT = "DetailsFragment"
         private const val TAG_EPISODE_UPDATE_JOB = "com.raywenderlich.podplay.episodes"
+        private const val TAG_PLAYER_FRAGMENT = "PlayerFragment"
     }
 
     private val searchViewModel by viewModels<SearchViewModel>()
@@ -222,6 +223,11 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         supportFragmentManager.popBackStack()
     }
 
+    override fun onShowEpisodePlayer(episodeViewData: PodcastViewModel.EpisodeViewData) {
+        podcastViewModel.activeEpisodeViewData = episodeViewData
+        showPlayerFragment()
+    }
+
     private fun showSubscribedPodcasts() {
         val podcasts = podcastViewModel.getPodcasts()?.value
         if (podcasts != null) {
@@ -239,20 +245,36 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     }
 
     private fun scheduleJobs() {
-// 1
         val constraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
             setRequiresCharging(true)
         }.build()
-// 2
+
         val request = PeriodicWorkRequestBuilder<EpisodeUpdateWorker>(
             1, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
-// 3
+
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             TAG_EPISODE_UPDATE_JOB,
             ExistingPeriodicWorkPolicy.REPLACE, request)
+    }
+
+    private fun createEpisodePlayerFragment(): EpisodePlayerFragment {
+        var episodePlayerFragment = supportFragmentManager.findFragmentByTag(TAG_PLAYER_FRAGMENT) as EpisodePlayerFragment?
+        if (episodePlayerFragment == null) {
+            episodePlayerFragment = EpisodePlayerFragment.newInstance()
+        }
+        return episodePlayerFragment
+    }
+
+    private fun showPlayerFragment() {
+        val episodePlayerFragment = createEpisodePlayerFragment()
+        supportFragmentManager.beginTransaction().
+        replace(R.id.podcastDetailsContainer, episodePlayerFragment, TAG_PLAYER_FRAGMENT)
+            .addToBackStack("PlayerFragment").commit()
+        podcastRecyclerView.visibility = View.INVISIBLE
+        searchMenuItem.isVisible = false
     }
 
 
